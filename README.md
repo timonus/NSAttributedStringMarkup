@@ -36,14 +36,14 @@ NSDictionary *const textAttributes = @{NSFontAttributeName: [UIFont systemFontOf
 NSAttributedString *const string = [NSAttributedString attributedStringWithMarkupString:markupString
                                                                              attributes:textAttributes
                                                                         customizerBlock:^NSDictionary *(NSString *tag) {
-                                                                            if ([tag isEqualToString:@"b"]) {
-                                                                                return @{NSFontAttributeName: [UIFont boldSystemFontOfSize:18.0]};
-                                                                            } else if ([tag isEqualToString:@"i"]) {
-                                                                                @{NSFontAttributeName: [UIFont italicSystemFontOfSize:16.0],
-                                                                                  NSForegroundColorAttributeName: [UIColor grayColor]};
-                                                                            }
-                                                                            return nil;
-                                                                        }];
+    if ([tag isEqualToString:@"b"]) {
+        return @{NSFontAttributeName: [UIFont boldSystemFontOfSize:18.0]};
+    } else if ([tag isEqualToString:@"i"]) {
+        @{NSFontAttributeName: [UIFont italicSystemFontOfSize:16.0],
+          NSForegroundColorAttributeName: [UIColor grayColor]};
+    }
+    return nil;
+}];
 ```
 
 The `attributes` text attributes are applied to the string passed in. The customization block is called for each `<...>`/`</...>` markup tag identified in the string and the attributes you return from that block are applied on top of the span enclosed in that tag. Simple as that!
