@@ -49,13 +49,20 @@
         NSAssert(regex, @"Unable to form regex");
         NSString *const underlyingString = mutableAttributedString.string;
         for (NSTextCheckingResult *const result in [[regex matchesInString:underlyingString options:0 range:NSMakeRange(0, underlyingString.length)] reverseObjectEnumerator]) {
-            NSMutableDictionary *const mutableAttributes = [NSMutableDictionary dictionaryWithDictionary:attributes];
             NSString *const parsedTag = supportNesting ? tag : [underlyingString substringWithRange:[result rangeAtIndex:1]];
             NSAssert([[underlyingString substringWithRange:[result rangeAtIndex:3]] isEqualToString:parsedTag], @"Mismatching tags! %@ - %@", parsedTag, [underlyingString substringWithRange:[result rangeAtIndex:3]]);
-            [mutableAttributes addEntriesFromDictionary:block(parsedTag)];
+            NSDictionary *const customizedAttributes = block(parsedTag);
+            NSDictionary *rangeAttributes;
+            if (customizedAttributes.count > 0) {
+                NSMutableDictionary *const mutableAttributes = [NSMutableDictionary dictionaryWithDictionary:attributes];
+                [mutableAttributes addEntriesFromDictionary:customizedAttributes];
+                rangeAttributes = mutableAttributes;
+            } else {
+                rangeAttributes = attributes;
+            }
             NSString *const text = [underlyingString substringWithRange:[result rangeAtIndex:2]];
             [mutableAttributedString replaceCharactersInRange:result.range
-                                         withAttributedString:[[NSAttributedString alloc] initWithString:text attributes:mutableAttributes]];
+                                         withAttributedString:[[NSAttributedString alloc] initWithString:text attributes:rangeAttributes]];
         }
     }
     
