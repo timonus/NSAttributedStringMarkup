@@ -54,7 +54,7 @@
             NSDictionary *const customizedAttributes = block(parsedTag);
             NSDictionary *rangeAttributes;
             if (customizedAttributes.count > 0) {
-                NSMutableDictionary *const mutableAttributes = [NSMutableDictionary dictionaryWithDictionary:attributes];
+                NSMutableDictionary *const mutableAttributes = [NSMutableDictionary dictionaryWithDictionary:[mutableAttributedString attributesAtIndex:result.range.location effectiveRange:nil]];
                 [mutableAttributes addEntriesFromDictionary:customizedAttributes];
                 rangeAttributes = mutableAttributes;
             } else {
