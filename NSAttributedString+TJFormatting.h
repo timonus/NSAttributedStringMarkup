@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)attributedStringWithMarkupString:(NSString *const)markupString
                                       attributes:(nullable NSDictionary *const)attributes
-                                 customizerBlock:(NSDictionary *_Nullable(^)(NSString *tag))block;
+                                 customizerBlock:(NSDictionary *_Nullable(^)(NSString *tag))customizerBlock;
 
 + (instancetype)attributedStringWithMarkupString:(NSString *const)markupString
                                   supportNesting:(const BOOL)supportNesting
