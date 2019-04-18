@@ -52,17 +52,18 @@
             NSString *const parsedTag = supportNesting ? tag : [underlyingString substringWithRange:[result rangeAtIndex:1]];
             NSAssert([[underlyingString substringWithRange:[result rangeAtIndex:3]] isEqualToString:parsedTag], @"Mismatching tags! %@ - %@", parsedTag, [underlyingString substringWithRange:[result rangeAtIndex:3]]);
             NSDictionary *const customizedAttributes = block(parsedTag);
-            NSDictionary *rangeAttributes;
+            NSString *const text = [underlyingString substringWithRange:[result rangeAtIndex:2]];
             if (customizedAttributes.count > 0) {
                 NSMutableDictionary *const mutableAttributes = [NSMutableDictionary dictionaryWithDictionary:[mutableAttributedString attributesAtIndex:result.range.location effectiveRange:nil]];
                 [mutableAttributes addEntriesFromDictionary:customizedAttributes];
-                rangeAttributes = mutableAttributes;
+                [mutableAttributedString replaceCharactersInRange:result.range
+                                             withAttributedString:[[NSAttributedString alloc] initWithString:text attributes:mutableAttributes]];
             } else {
-                rangeAttributes = attributes;
+                [mutableAttributedString replaceCharactersInRange:result.range
+                                                       withString:text];
             }
-            NSString *const text = [underlyingString substringWithRange:[result rangeAtIndex:2]];
-            [mutableAttributedString replaceCharactersInRange:result.range
-                                         withAttributedString:[[NSAttributedString alloc] initWithString:text attributes:rangeAttributes]];
+            
+            
         }
     }
     
