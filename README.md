@@ -39,8 +39,8 @@ NSAttributedString *const string = [NSAttributedString attributedStringWithMarku
     if ([tag isEqualToString:@"b"]) {
         return @{NSFontAttributeName: [UIFont boldSystemFontOfSize:18.0]};
     } else if ([tag isEqualToString:@"i"]) {
-        @{NSFontAttributeName: [UIFont italicSystemFontOfSize:16.0],
-          NSForegroundColorAttributeName: [UIColor grayColor]};
+        return @{NSFontAttributeName: [UIFont italicSystemFontOfSize:16.0],
+                 NSForegroundColorAttributeName: [UIColor grayColor]};
     }
     return nil;
 }];
