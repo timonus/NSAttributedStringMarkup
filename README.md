@@ -54,4 +54,4 @@ By default this method handles nested pairs of tags, but this has some small per
 
 ### About
 
-I built this when localizing [Opener](https://itunes.apple.com/app/id989565871) last year, and I've since used it in [Burst](https://itunes.apple.com/app/id1355171732) as well. I find this to be a pretty sensible, uncomplicated way of building attributed strings. Hope you find it useful!
+I built this when localizing [Opener](https://apps.apple.com/app/id989565871), and I've since used it in [Burst](https://apps.apple.com/app/id1355171732) as well. I find this to be a pretty sensible, uncomplicated way of building attributed strings. Hope you find it useful!
