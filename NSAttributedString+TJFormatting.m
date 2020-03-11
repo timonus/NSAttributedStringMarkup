@@ -30,7 +30,7 @@
         static NSRegularExpression *tagRegex;
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
-            tagRegex = [NSRegularExpression regularExpressionWithPattern:@"</?(.*?)>" options:0 error:nil];
+            tagRegex = [NSRegularExpression regularExpressionWithPattern:@"</(.*?)>" options:0 error:nil];
         });
         
         regexesForTags = [NSMutableDictionary new];
