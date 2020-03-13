@@ -37,7 +37,8 @@
         for (NSTextCheckingResult *const result in [tagRegex matchesInString:markupString options:0 range:NSMakeRange(0, markupString.length)]) {
             NSString *const tag = [markupString substringWithRange:[result rangeAtIndex:1]];
             if (![regexesForTags objectForKey:tag]) {
-                NSRegularExpression *const regex = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"<(%1$@)>(.*?)</(%1$@)>", tag] options:0 error:nil];
+                NSString *const escapedTag = [NSRegularExpression escapedPatternForString:tag];
+                NSRegularExpression *const regex = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"<(%1$@)>(.*?)</(%1$@)>", escapedTag] options:0 error:nil];
                 NSAssert(regex, @"Unable to form regex for tag %@", tag);
                 [(NSMutableDictionary *)regexesForTags setObject:regex forKey:tag];
             }
