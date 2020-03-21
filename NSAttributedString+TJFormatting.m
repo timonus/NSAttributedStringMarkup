@@ -25,7 +25,8 @@
                                       attributes:(NSDictionary *const)attributes
                                  customizerBlock:(NSDictionary *(^)(NSString *tag))block
 {
-    NSDictionary<NSString *, NSRegularExpression *> *regexesForTags;
+#define regexesForTagsTypes NSString *, NSRegularExpression *
+    NSDictionary<regexesForTagsTypes> *regexesForTags;
     if (supportNesting) {
         static NSRegularExpression *tagRegex;
         static dispatch_once_t onceToken;
@@ -40,7 +41,7 @@
                 NSString *const escapedTag = [NSRegularExpression escapedPatternForString:tag];
                 NSRegularExpression *const regex = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"<(%1$@)>(.*?)</(%1$@)>", escapedTag] options:0 error:nil];
                 NSAssert(regex, @"Unable to form regex for tag %@", tag);
-                [(NSMutableDictionary *)regexesForTags setObject:regex forKey:tag];
+                [(NSMutableDictionary<regexesForTagsTypes> *)regexesForTags setObject:regex forKey:tag];
             }
         }
     } else {
