@@ -30,4 +30,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface NSMutableAttributedString (TJFormatting)
+
+- (void)processMarkupWithCustomizerBlock:(NSDictionary *_Nullable(^)(NSString *tag))block
+                          supportNesting:(const BOOL)supportNesting;
+
+@end
+
 NS_ASSUME_NONNULL_END
