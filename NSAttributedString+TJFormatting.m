@@ -12,7 +12,7 @@
 
 + (instancetype)attributedStringWithMarkupString:(NSString *const)markupString
                                       attributes:(NSDictionary *const)attributes
-                                 customizerBlock:(NSDictionary *(^)(NSString *tag))block
+                                 customizerBlock:(TJFormattingCustomizerBlock)block
 {
     return [self attributedStringWithMarkupString:markupString
                                    supportNesting:YES
@@ -23,7 +23,7 @@
 + (instancetype)attributedStringWithMarkupString:(NSString *const)markupString
                                   supportNesting:(const BOOL)supportNesting
                                       attributes:(NSDictionary *const)attributes
-                                 customizerBlock:(NSDictionary *(^)(NSString *tag))block
+                                 customizerBlock:(TJFormattingCustomizerBlock)block
 {
 #define regexesForTagsTypes NSString *, NSRegularExpression *
     NSDictionary<regexesForTagsTypes> *regexesForTags;
@@ -59,20 +59,20 @@
         for (NSTextCheckingResult *const result in [[regex matchesInString:underlyingString options:0 range:NSMakeRange(0, underlyingString.length)] reverseObjectEnumerator]) {
             NSString *const parsedTag = supportNesting ? tag : [underlyingString substringWithRange:[result rangeAtIndex:1]];
             NSAssert([[underlyingString substringWithRange:[result rangeAtIndex:3]] isEqualToString:parsedTag], @"Mismatching tags! %@ - %@", parsedTag, [underlyingString substringWithRange:[result rangeAtIndex:3]]);
-            NSDictionary *const customizedAttributes = block(parsedTag);
             
             // Apply attributes if needed
-            if (customizedAttributes.count > 0) {
-                [mutableAttributedString enumerateAttributesInRange:result.range
-                                                            options:0
-                                                         usingBlock:^(NSDictionary<NSAttributedStringKey,id> * _Nonnull attributes, NSRange range, BOOL * _Nonnull stop) {
+            [mutableAttributedString enumerateAttributesInRange:result.range
+                                                        options:0
+                                                     usingBlock:^(NSDictionary<NSAttributedStringKey,id> * _Nonnull attributes, NSRange range, BOOL * _Nonnull stop) {
+                NSDictionary *const customizedAttributes = block(parsedTag, attributes);
+                if (customizedAttributes.count) {
                     NSMutableDictionary *const mutableAttributes = [NSMutableDictionary dictionaryWithDictionary:attributes];
                     [mutableAttributes addEntriesFromDictionary:customizedAttributes];
                     [mutableAttributedString replaceCharactersInRange:range
                                                  withAttributedString:[[NSAttributedString alloc] initWithString:[underlyingString substringWithRange:range]
                                                                                                       attributes:mutableAttributes]];
-                }];
-            }
+                }
+            }];
             
             // Remove enclosing tags
             [mutableAttributedString replaceCharactersInRange:result.range

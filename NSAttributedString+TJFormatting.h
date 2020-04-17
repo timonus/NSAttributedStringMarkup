@@ -10,6 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NSDictionary<NSAttributedStringKey, id> *_Nullable (^TJFormattingCustomizerBlock)(NSString *const tag, NSDictionary<NSAttributedStringKey, id> *attributes);
 @interface NSAttributedString (TJFormatting)
 
 /**
@@ -21,12 +22,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)attributedStringWithMarkupString:(NSString *const)markupString
                                       attributes:(nullable NSDictionary *const)attributes
-                                 customizerBlock:(NSDictionary *_Nullable(^)(NSString *tag))customizerBlock;
+                                 customizerBlock:(TJFormattingCustomizerBlock)customizerBlock;
 
 + (instancetype)attributedStringWithMarkupString:(NSString *const)markupString
                                   supportNesting:(const BOOL)supportNesting
                                       attributes:(nullable NSDictionary *const)attributes
-                                 customizerBlock:(NSDictionary *_Nullable(^)(NSString *tag))block;
+                                 customizerBlock:(TJFormattingCustomizerBlock)block;
 
 @end
 

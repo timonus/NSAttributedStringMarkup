@@ -35,7 +35,7 @@ NSString *const markupString = @"Here's to the <b>crazy ones</b>.\nThe <b>misfit
 NSDictionary *const textAttributes = @{NSFontAttributeName: [UIFont systemFontOfSize:18.0]};
 NSAttributedString *const string = [NSAttributedString attributedStringWithMarkupString:markupString
                                                                              attributes:textAttributes
-                                                                        customizerBlock:^NSDictionary *(NSString *tag) {
+                                                                        customizerBlock:^NSDictionary *(NSString *tag, NSDictionary *attributes) {
     if ([tag isEqualToString:@"b"]) {
         return @{NSFontAttributeName: [UIFont boldSystemFontOfSize:18.0]};
     } else if ([tag isEqualToString:@"i"]) {
