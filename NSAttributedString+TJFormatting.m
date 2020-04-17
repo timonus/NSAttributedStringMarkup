@@ -8,6 +8,49 @@
 
 #import "NSAttributedString+TJFormatting.h"
 
+#import <UIKit/UIKit.h>
+
+TJFormattingCustomizerBlock TJFormattingCommonCustomizerBlock() {
+    return ^NSDictionary *(NSString *const tag, NSDictionary<NSAttributedStringKey, id> *attributes) {
+        UIFont *const font = attributes[NSFontAttributeName];
+        if ([tag isEqualToString:@"b"] || [tag isEqualToString:@"strong"]) {
+            for (NSNumber *const fontWeightValue in @[@(UIFontWeightBold),
+                                                      @(UIFontWeightHeavy),
+                                                      @(UIFontWeightSemibold),
+                                                      @(UIFontWeightBlack),
+                                                      @(UIFontWeightMedium),]) {
+                UIFont *const boldFont = [UIFont fontWithDescriptor:[[font fontDescriptor] fontDescriptorWithSymbolicTraits:fontWeightValue.doubleValue]
+                                                               size:font.pointSize];
+                if (boldFont) {
+                    return @{NSFontAttributeName: boldFont};
+                }
+            }
+        } else if ([tag isEqualToString:@"i"] || [tag isEqualToString:@"em"]) {
+            UIFont *const italicFont = [UIFont fontWithDescriptor:[[font fontDescriptor] fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitItalic]
+                                                             size:font.pointSize];
+            if (italicFont) {
+                return @{NSFontAttributeName: italicFont};
+            }
+        } else if ([tag isEqualToString:@"u"]) {
+            return @{NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle)};
+        } else if ([tag isEqualToString:@"s"] || [tag isEqualToString:@"del"]) {
+            return @{NSStrikethroughStyleAttributeName: @(NSUnderlineStyleSingle)};
+        } else if ([tag isEqualToString:@"code"]) {
+            UIFont *const monospaceFont = [UIFont fontWithDescriptor:[[font fontDescriptor] fontDescriptorWithSymbolicTraits:UIFontDescriptorTraitMonoSpace]
+                                                                size:font.pointSize];
+            if (monospaceFont) {
+                return @{NSFontAttributeName: monospaceFont};
+            }
+        } else {
+            NSURL *const url = [NSURL URLWithString:tag];
+            if (url) {
+                return @{NSLinkAttributeName: url};
+            }
+        }
+        return nil;
+    };
+}
+
 @implementation NSAttributedString (TJFormatting)
 
 + (instancetype)attributedStringWithMarkupString:(NSString *const)markupString

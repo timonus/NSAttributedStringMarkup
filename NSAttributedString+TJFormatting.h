@@ -11,6 +11,18 @@
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NSDictionary<NSAttributedStringKey, id> *_Nullable (^TJFormattingCustomizerBlock)(NSString *const tag, NSDictionary<NSAttributedStringKey, id> *attributes);
+
+/**
+ Provided for convenience. This customizer block will parse
+ @c b / @c strong For bold tags.
+ @c i / @c em For italic tags.
+ @c u For underline tags.
+ @c s / @c del For strikethrough.
+ @c code For monospace.
+ URLs into @c NSLinkAttributeName
+ */
+extern TJFormattingCustomizerBlock TJFormattingCommonCustomizerBlock(void);
+
 @interface NSAttributedString (TJFormatting)
 
 /**
