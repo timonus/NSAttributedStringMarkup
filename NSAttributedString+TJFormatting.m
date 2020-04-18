@@ -59,24 +59,41 @@
         for (NSTextCheckingResult *const result in [[regex matchesInString:underlyingString options:0 range:NSMakeRange(0, underlyingString.length)] reverseObjectEnumerator]) {
             NSString *const parsedTag = supportNesting ? tag : [underlyingString substringWithRange:[result rangeAtIndex:1]];
             NSAssert([[underlyingString substringWithRange:[result rangeAtIndex:3]] isEqualToString:parsedTag], @"Mismatching tags! %@ - %@", parsedTag, [underlyingString substringWithRange:[result rangeAtIndex:3]]);
-            
-            // Apply attributes if needed
-            [mutableAttributedString enumerateAttributesInRange:result.range
-                                                        options:0
-                                                     usingBlock:^(NSDictionary<NSAttributedStringKey,id> * _Nonnull attributes, NSRange range, BOOL * _Nonnull stop) {
+            const NSRange textRange = [result rangeAtIndex:2];
+            const NSRange fullRange = result.range;
+            if (supportNesting) {
+                // Apply attributes if needed
+                [mutableAttributedString enumerateAttributesInRange:textRange
+                                                            options:0
+                                                         usingBlock:^(NSDictionary<NSAttributedStringKey,id> * _Nonnull subrangeAttributes, NSRange subrange, BOOL * _Nonnull stop) {
+                    NSDictionary *const customizedAttributes = block(parsedTag, subrangeAttributes);
+                    if (customizedAttributes.count) {
+                        NSMutableDictionary *const mutableAttributes = [NSMutableDictionary dictionaryWithDictionary:subrangeAttributes];
+                        [mutableAttributes addEntriesFromDictionary:customizedAttributes];
+                        [mutableAttributedString replaceCharactersInRange:subrange
+                                                     withAttributedString:[[NSAttributedString alloc] initWithString:[underlyingString substringWithRange:subrange]
+                                                                                                          attributes:mutableAttributes]];
+                    }
+                }];
+                
+                // Remove enclosing tags
+                [mutableAttributedString replaceCharactersInRange:fullRange
+                                             withAttributedString:[mutableAttributedString attributedSubstringFromRange:textRange]];
+            } else {
+                NSString *const text = [underlyingString substringWithRange:textRange];
                 NSDictionary *const customizedAttributes = block(parsedTag, attributes);
                 if (customizedAttributes.count) {
+                    // Apply attributes if needed
                     NSMutableDictionary *const mutableAttributes = [NSMutableDictionary dictionaryWithDictionary:attributes];
                     [mutableAttributes addEntriesFromDictionary:customizedAttributes];
-                    [mutableAttributedString replaceCharactersInRange:range
-                                                 withAttributedString:[[NSAttributedString alloc] initWithString:[underlyingString substringWithRange:range]
-                                                                                                      attributes:mutableAttributes]];
+                    [mutableAttributedString replaceCharactersInRange:fullRange
+                                                 withAttributedString:[[NSAttributedString alloc] initWithString:text attributes:mutableAttributes]];
+                } else {
+                    // Otherwise just remove enclosing tags
+                    [mutableAttributedString replaceCharactersInRange:fullRange
+                                                           withString:text];
                 }
-            }];
-            
-            // Remove enclosing tags
-            [mutableAttributedString replaceCharactersInRange:result.range
-                                         withAttributedString:[mutableAttributedString attributedSubstringFromRange:[result rangeAtIndex:2]]];
+            }
         }
     }];
     
