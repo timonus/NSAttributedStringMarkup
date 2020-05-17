@@ -20,11 +20,11 @@ typedef NSDictionary<NSAttributedStringKey, id> *_Nullable (^TJFormattingCustomi
  @param customizerBlock A block that's called for each markup tag that's detected. Returns a dictionary of NSAttributedString attributes to apply to the span of text within the tag.
  @note This method supports nested tags by default, you can use the method below with @c supportNesting set to @c NO as an optional perf optimization if your input doesn't contain nested tags.
  */
-+ (instancetype)attributedStringWithMarkupString:(NSString *const)markupString
++ (instancetype)attributedStringWithMarkupString:(nullable NSString *const)markupString
                                       attributes:(nullable NSDictionary *const)attributes
                                  customizerBlock:(TJFormattingCustomizerBlock)customizerBlock;
 
-+ (instancetype)attributedStringWithMarkupString:(NSString *const)markupString
++ (instancetype)attributedStringWithMarkupString:(nullable NSString *const)markupString
                                   supportNesting:(const BOOL)supportNesting
                                       attributes:(nullable NSDictionary *const)attributes
                                  customizerBlock:(TJFormattingCustomizerBlock)block;

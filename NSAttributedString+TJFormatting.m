@@ -34,14 +34,16 @@
             tagRegex = [NSRegularExpression regularExpressionWithPattern:@"</(.*?)>" options:0 error:nil];
         });
         
-        regexesForTags = [NSMutableDictionary new];
-        for (NSTextCheckingResult *const result in [tagRegex matchesInString:markupString options:0 range:NSMakeRange(0, markupString.length)]) {
-            NSString *const tag = [markupString substringWithRange:[result rangeAtIndex:1]];
-            if (![regexesForTags objectForKey:tag]) {
-                NSString *const escapedTag = [NSRegularExpression escapedPatternForString:tag];
-                NSRegularExpression *const regex = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"<(%1$@)>(.*?)</(%1$@)>", escapedTag] options:0 error:nil];
-                NSAssert(regex, @"Unable to form regex for tag %@", tag);
-                [(NSMutableDictionary<regexesForTagsTypes> *)regexesForTags setObject:regex forKey:tag];
+        if (markupString.length) {
+            regexesForTags = [NSMutableDictionary new];
+            for (NSTextCheckingResult *const result in [tagRegex matchesInString:markupString options:0 range:NSMakeRange(0, markupString.length)]) {
+                NSString *const tag = [markupString substringWithRange:[result rangeAtIndex:1]];
+                if (![regexesForTags objectForKey:tag]) {
+                    NSString *const escapedTag = [NSRegularExpression escapedPatternForString:tag];
+                    NSRegularExpression *const regex = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"<(%1$@)>(.*?)</(%1$@)>", escapedTag] options:0 error:nil];
+                    NSAssert(regex, @"Unable to form regex for tag %@", tag);
+                    [(NSMutableDictionary<regexesForTagsTypes> *)regexesForTags setObject:regex forKey:tag];
+                }
             }
         }
     } else {
@@ -53,9 +55,13 @@
         regexesForTags = genericRegexesForTags;
     }
     
-    NSMutableAttributedString *const mutableAttributedString = [[NSMutableAttributedString alloc] initWithString:markupString attributes:attributes];
+    NSMutableAttributedString *const mutableAttributedString = markupString ? [[NSMutableAttributedString alloc] initWithString:markupString attributes:attributes] : nil;
     [regexesForTags enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull tag, NSRegularExpression * _Nonnull regex, BOOL * _Nonnull stop) {
         NSString *const underlyingString = mutableAttributedString.string;
+        if (!underlyingString.length) {
+            *stop = YES;
+            return;
+        }
         for (NSTextCheckingResult *const result in [[regex matchesInString:underlyingString options:0 range:NSMakeRange(0, underlyingString.length)] reverseObjectEnumerator]) {
             NSString *const parsedTag = supportNesting ? tag : [underlyingString substringWithRange:[result rangeAtIndex:1]];
             NSAssert([[underlyingString substringWithRange:[result rangeAtIndex:3]] isEqualToString:parsedTag], @"Mismatching tags! %@ - %@", parsedTag, [underlyingString substringWithRange:[result rangeAtIndex:3]]);
