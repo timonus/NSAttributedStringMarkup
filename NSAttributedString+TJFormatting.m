@@ -25,46 +25,22 @@
                                       attributes:(NSDictionary *const)attributes
                                  customizerBlock:(TJFormattingCustomizerBlock)block
 {
-#define regexesForTagsTypes NSString *, NSRegularExpression *
-    NSDictionary<regexesForTagsTypes> *regexesForTags;
-    if (supportNesting) {
-        static NSRegularExpression *tagRegex;
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            tagRegex = [NSRegularExpression regularExpressionWithPattern:@"</(.*?)>" options:0 error:nil];
-        });
-        
-        if (markupString.length) {
-            regexesForTags = [NSMutableDictionary new];
-            for (NSTextCheckingResult *const result in [tagRegex matchesInString:markupString options:0 range:NSMakeRange(0, markupString.length)]) {
-                NSString *const tag = [markupString substringWithRange:[result rangeAtIndex:1]];
-                if (![regexesForTags objectForKey:tag]) {
-                    NSString *const escapedTag = [NSRegularExpression escapedPatternForString:tag];
-                    NSRegularExpression *const regex = [NSRegularExpression regularExpressionWithPattern:[NSString stringWithFormat:@"<(%1$@)>(.*?)</(%1$@)>", escapedTag] options:0 error:nil];
-                    NSAssert(regex, @"Unable to form regex for tag %@", tag);
-                    [(NSMutableDictionary<regexesForTagsTypes> *)regexesForTags setObject:regex forKey:tag];
-                }
-            }
-        }
-    } else {
-        static NSDictionary<NSString *, NSRegularExpression *> *genericRegexesForTags;
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            genericRegexesForTags = @{@"": [NSRegularExpression regularExpressionWithPattern:@"<(.*?)>(.*?)</(.*?)>" options:0 error:nil]}; // The key is ignored in this case, "parsedTag" is populated in the loop below.
-        });
-        regexesForTags = genericRegexesForTags;
-    }
+    static NSRegularExpression *regex;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        regex = [NSRegularExpression regularExpressionWithPattern:@"<(.*?)>(.*?)</(\\1)>" options:0 error:nil];
+    });
     
     NSMutableAttributedString *const mutableAttributedString = markupString ? [[NSMutableAttributedString alloc] initWithString:markupString attributes:attributes] : nil;
-    [regexesForTags enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull tag, NSRegularExpression * _Nonnull regex, BOOL * _Nonnull stop) {
+    BOOL continueLooping;
+    do {
         NSString *const underlyingString = mutableAttributedString.string;
         if (!underlyingString.length) {
-            *stop = YES;
-            return;
+            break;
         }
+        continueLooping = NO;
         for (NSTextCheckingResult *const result in [[regex matchesInString:underlyingString options:0 range:NSMakeRange(0, underlyingString.length)] reverseObjectEnumerator]) {
-            NSString *const parsedTag = supportNesting ? tag : [underlyingString substringWithRange:[result rangeAtIndex:1]];
-            NSAssert([[underlyingString substringWithRange:[result rangeAtIndex:3]] isEqualToString:parsedTag], @"Mismatching tags! %@ - %@", parsedTag, [underlyingString substringWithRange:[result rangeAtIndex:3]]);
+            NSString *const parsedTag = [underlyingString substringWithRange:[result rangeAtIndex:1]];
             const NSRange textRange = [result rangeAtIndex:2];
             const NSRange fullRange = result.range;
             if (supportNesting) {
@@ -85,6 +61,9 @@
                 // Remove enclosing tags
                 [mutableAttributedString replaceCharactersInRange:fullRange
                                              withAttributedString:[mutableAttributedString attributedSubstringFromRange:textRange]];
+                
+                // If tags were found we might've not exhaused all inner nested ones, so loop once again.
+                continueLooping = YES;
             } else {
                 NSString *const text = [underlyingString substringWithRange:textRange];
                 NSDictionary *const customizedAttributes = block(parsedTag, attributes);
@@ -101,7 +80,7 @@
                 }
             }
         }
-    }];
+    } while(continueLooping);
     
     return mutableAttributedString;
 }
