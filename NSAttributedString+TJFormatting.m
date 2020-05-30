@@ -50,11 +50,7 @@
                                                          usingBlock:^(NSDictionary<NSAttributedStringKey,id> * _Nonnull subrangeAttributes, NSRange subrange, BOOL * _Nonnull stop) {
                     NSDictionary *const customizedAttributes = block(parsedTag, subrangeAttributes);
                     if (customizedAttributes.count) {
-                        NSMutableDictionary *const mutableAttributes = [NSMutableDictionary dictionaryWithDictionary:subrangeAttributes];
-                        [mutableAttributes addEntriesFromDictionary:customizedAttributes];
-                        [mutableAttributedString replaceCharactersInRange:subrange
-                                                     withAttributedString:[[NSAttributedString alloc] initWithString:[underlyingString substringWithRange:subrange]
-                                                                                                          attributes:mutableAttributes]];
+                        [mutableAttributedString addAttributes:customizedAttributes range:subrange];
                     }
                 }];
                 
