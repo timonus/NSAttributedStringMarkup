@@ -35,11 +35,12 @@
     BOOL continueLooping;
     do {
         NSString *const underlyingString = mutableAttributedString.string;
-        if (!underlyingString.length) {
+        const NSUInteger underlyingStringLength = underlyingString.length;
+        if (!underlyingStringLength) {
             break;
         }
         continueLooping = NO;
-        for (NSTextCheckingResult *const result in [[regex matchesInString:underlyingString options:0 range:NSMakeRange(0, underlyingString.length)] reverseObjectEnumerator]) {
+        for (NSTextCheckingResult *const result in [[regex matchesInString:underlyingString options:0 range:NSMakeRange(0, underlyingStringLength)] reverseObjectEnumerator]) {
             NSString *const parsedTag = [underlyingString substringWithRange:[result rangeAtIndex:1]];
             const NSRange textRange = [result rangeAtIndex:2];
             const NSRange fullRange = result.range;
