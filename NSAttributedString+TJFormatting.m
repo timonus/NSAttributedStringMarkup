@@ -31,7 +31,7 @@ __attribute__((objc_direct_members))
     static NSRegularExpression *regex;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        regex = [NSRegularExpression regularExpressionWithPattern:@"<(.*?)>(.*?)</(\\1)>" options:0 error:nil];
+        regex = [NSRegularExpression regularExpressionWithPattern:@"<(.*?)>(.*?)</\\1>" options:0 error:nil];
     });
     
     NSMutableAttributedString *const mutableAttributedString = markupString ? [[NSMutableAttributedString alloc] initWithString:markupString attributes:attributes] : nil;
