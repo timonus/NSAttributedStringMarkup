@@ -21,12 +21,12 @@ typedef NSDictionary<NSAttributedStringKey, id> *_Nullable (^TJFormattingCustomi
  @note This method supports nested tags by default, you can use the method below with @c supportNesting set to @c NO as an optional perf optimization if your input doesn't contain nested tags.
  */
 + (nullable instancetype)attributedStringWithMarkupString:(nullable NSString *const)markupString
-                                               attributes:(nullable NSDictionary *const)attributes
+                                               attributes:(nullable NSDictionary<NSAttributedStringKey, id> *const)attributes
                                           customizerBlock:(TJFormattingCustomizerBlock)customizerBlock;
 
 + (nullable instancetype)attributedStringWithMarkupString:(nullable NSString *const)markupString
                                            supportNesting:(const BOOL)supportNesting
-                                               attributes:(nullable NSDictionary *const)attributes
+                                               attributes:(nullable NSDictionary<NSAttributedStringKey, id> *const)attributes
                                           customizerBlock:(TJFormattingCustomizerBlock)block;
 
 @end

@@ -14,7 +14,7 @@ __attribute__((objc_direct_members))
 @implementation NSAttributedString (TJFormatting)
 
 + (instancetype)attributedStringWithMarkupString:(NSString *const)markupString
-                                      attributes:(NSDictionary *const)attributes
+                                      attributes:(nullable NSDictionary<NSAttributedStringKey,id> *const)attributes
                                  customizerBlock:(TJFormattingCustomizerBlock)block
 {
     return [self attributedStringWithMarkupString:markupString
@@ -25,7 +25,7 @@ __attribute__((objc_direct_members))
 
 + (instancetype)attributedStringWithMarkupString:(NSString *const)markupString
                                   supportNesting:(const BOOL)supportNesting
-                                      attributes:(NSDictionary *const)attributes
+                                      attributes:(NSDictionary<NSAttributedStringKey,id> *const)attributes
                                  customizerBlock:(TJFormattingCustomizerBlock)block
 {
     static NSRegularExpression *regex;
