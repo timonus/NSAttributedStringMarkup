@@ -66,10 +66,10 @@ __attribute__((objc_direct_members))
                 continueLooping = YES;
             } else {
                 NSString *const text = [underlyingString substringWithRange:textRange];
-                NSDictionary *const customizedAttributes = block(parsedTag, attributes);
+                NSDictionary<NSAttributedStringKey, id> *const customizedAttributes = block(parsedTag, attributes);
                 if (customizedAttributes.count) {
                     // Apply attributes if needed
-                    NSMutableDictionary *const mutableAttributes = [NSMutableDictionary dictionaryWithDictionary:attributes];
+                    NSMutableDictionary<NSAttributedStringKey, id> *const mutableAttributes = [NSMutableDictionary dictionaryWithDictionary:attributes];
                     [mutableAttributes addEntriesFromDictionary:customizedAttributes];
                     [mutableAttributedString replaceCharactersInRange:fullRange
                                                  withAttributedString:[[NSAttributedString alloc] initWithString:text attributes:mutableAttributes]];
