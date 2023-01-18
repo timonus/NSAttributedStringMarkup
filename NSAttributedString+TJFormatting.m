@@ -34,7 +34,7 @@ __attribute__((objc_direct_members))
         regex = [NSRegularExpression regularExpressionWithPattern:@"<(.*?)>(.*?)</\\1>" options:NSRegularExpressionDotMatchesLineSeparators error:nil];
     });
     
-    NSMutableAttributedString *const mutableAttributedString = markupString ? [[NSMutableAttributedString alloc] initWithString:markupString attributes:attributes] : nil;
+    NSMutableAttributedString *const mutableAttributedString = (markupString != nil) ? [[NSMutableAttributedString alloc] initWithString:markupString attributes:attributes] : nil;
     BOOL continueLooping;
     do {
         NSString *const underlyingString = mutableAttributedString.string;
