@@ -35,15 +35,16 @@ __attribute__((objc_direct_members))
     });
     
     NSMutableAttributedString *const mutableAttributedString = (markupString != nil) ? [[NSMutableAttributedString alloc] initWithString:markupString attributes:attributes] : nil;
-    BOOL continueLooping;
-    do {
+    BOOL mayContainUnhandledTags = YES;
+    while (mayContainUnhandledTags) {
         NSString *const underlyingString = mutableAttributedString.string;
         const NSUInteger underlyingStringLength = underlyingString.length;
         if (!underlyingStringLength) {
             break;
         }
-        continueLooping = NO;
-        for (NSTextCheckingResult *const result in [[regex matchesInString:underlyingString options:0 range:NSMakeRange(0, underlyingStringLength)] reverseObjectEnumerator]) {
+        NSArray<NSTextCheckingResult *> *const matches = [regex matchesInString:underlyingString options:0 range:NSMakeRange(0, underlyingStringLength)];
+        mayContainUnhandledTags = supportNesting && matches.count > 0;
+        for (NSTextCheckingResult *const result in matches.reverseObjectEnumerator) {
             NSString *const parsedTag = [underlyingString substringWithRange:[result rangeAtIndex:1]];
             const NSRange textRange = [result rangeAtIndex:2];
             const NSRange fullRange = result.range;
@@ -61,9 +62,6 @@ __attribute__((objc_direct_members))
                 // Remove enclosing tags
                 [mutableAttributedString replaceCharactersInRange:fullRange
                                              withAttributedString:[mutableAttributedString attributedSubstringFromRange:textRange]];
-                
-                // If tags were found we might've not exhaused all inner nested ones, so loop once again.
-                continueLooping = YES;
             } else {
                 NSString *const text = [underlyingString substringWithRange:textRange];
                 NSDictionary<NSAttributedStringKey, id> *const customizedAttributes = block(parsedTag, attributes);
@@ -80,7 +78,7 @@ __attribute__((objc_direct_members))
                 }
             }
         }
-    } while(continueLooping);
+    }
     
     return mutableAttributedString ? [[self alloc] initWithAttributedString:mutableAttributedString] : nil;
 }
