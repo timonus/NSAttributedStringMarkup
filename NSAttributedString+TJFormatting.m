@@ -82,7 +82,7 @@ __attribute__((objc_direct_members))
         }
     } while(continueLooping);
     
-    return [[self alloc] initWithAttributedString:mutableAttributedString];
+    return mutableAttributedString ? [[self alloc] initWithAttributedString:mutableAttributedString] : nil;
 }
 
 @end
