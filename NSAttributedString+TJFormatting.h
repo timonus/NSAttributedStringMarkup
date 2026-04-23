@@ -22,12 +22,12 @@ typedef NSDictionary<NSAttributedStringKey, id> *_Nullable (^TJFormattingCustomi
  */
 + (nullable instancetype)attributedStringWithMarkupString:(nullable NSString *const)markupString
                                                attributes:(nullable NSDictionary<NSAttributedStringKey, id> *const)attributes
-                                          customizerBlock:(TJFormattingCustomizerBlock)customizerBlock;
+                                          customizerBlock:(NS_NOESCAPE TJFormattingCustomizerBlock)customizerBlock;
 
 + (nullable instancetype)attributedStringWithMarkupString:(nullable NSString *const)markupString
                                            supportNesting:(const BOOL)supportNesting
                                                attributes:(nullable NSDictionary<NSAttributedStringKey, id> *const)attributes
-                                          customizerBlock:(TJFormattingCustomizerBlock)block;
+                                          customizerBlock:(NS_NOESCAPE TJFormattingCustomizerBlock)block;
 
 @end
 

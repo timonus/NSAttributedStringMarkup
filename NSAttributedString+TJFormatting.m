@@ -15,7 +15,7 @@ __attribute__((objc_direct_members))
 
 + (instancetype)attributedStringWithMarkupString:(NSString *const)markupString
                                       attributes:(nullable NSDictionary<NSAttributedStringKey,id> *const)attributes
-                                 customizerBlock:(TJFormattingCustomizerBlock)block
+                                 customizerBlock:(NS_NOESCAPE TJFormattingCustomizerBlock)block
 {
     return [self attributedStringWithMarkupString:markupString
                                    supportNesting:YES
@@ -26,7 +26,7 @@ __attribute__((objc_direct_members))
 + (instancetype)attributedStringWithMarkupString:(NSString *const)markupString
                                   supportNesting:(const BOOL)supportNesting
                                       attributes:(NSDictionary<NSAttributedStringKey,id> *const)attributes
-                                 customizerBlock:(TJFormattingCustomizerBlock)block
+                                 customizerBlock:(NS_NOESCAPE TJFormattingCustomizerBlock)block
 {
     static NSRegularExpression *regex;
     static dispatch_once_t onceToken;
